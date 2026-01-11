@@ -32,13 +32,18 @@ This document provides detailed information about this project's architecture, t
 
 ## Folder Structure
 
-**IMPORTANT**: This project uses a **Next.js App Router-inspired folder structure** even though it's a Vite + React app.
+**IMPORTANT**: This project uses a **hybrid folder structure** combining Next.js App Router conventions with features-based organization.
 
 ```
 src/
-├── app/              # Pages (Next.js App Router style)
+├── app/              # Main application pages (Next.js App Router style)
 │   └── page.tsx      # Main application page
-├── components/       # React components
+├── features/         # Feature-based modules
+│   └── [feature-name]/
+│       ├── page.tsx           # Feature page component
+│       ├── components/        # Feature-specific components (optional)
+│       └── hooks/            # Feature-specific hooks (optional)
+├── components/       # Shared/reusable React components
 │   ├── ui/          # shadcn/ui components
 │   ├── theme-provider.tsx
 │   └── theme-toggle.tsx
@@ -49,10 +54,28 @@ src/
 └── main.tsx         # Application entry point
 ```
 
+### Key Principles
+
+1. **`app/` directory**: Main application pages only (Next.js App Router style)
+   - Use `page.tsx` naming convention
+   - Example: `src/app/page.tsx` for the main application
+
+2. **`features/` directory**: Feature-based organization
+   - Each feature gets its own folder under `src/features/`
+   - Each feature can contain its own `page.tsx`, components, hooks, etc.
+   - Example: `src/features/component-test/page.tsx`
+   - Benefits: Better code organization, easier to maintain and scale
+
+3. **`components/` directory**: Shared, reusable components
+   - Only components used across multiple features
+   - `ui/` subfolder for shadcn/ui component library
+   - Example: `src/components/ui/button.tsx`
+
 ### Key Differences from Standard Vite Structure
 - Uses `src/app/page.tsx` instead of `src/App.tsx`
 - Follows Next.js naming conventions (`page.tsx`, not `App.tsx`)
-- Imports from `@/app/page` in `main.tsx`
+- Uses features-based structure for feature-specific code
+- Imports use `@/` alias for absolute paths
 
 ## Theme System
 
@@ -217,16 +240,24 @@ npm run format       # Format code with Biome
 
 When working on this project:
 
-1. **Folder Structure**: Remember this uses Next.js-style structure (`src/app/page.tsx`)
-2. **Tailwind v4**: No config file, everything in CSS with `@theme`
-3. **Dark Mode**: Use `.dark` class selector, not media queries
-4. **Linting**: Biome only checks JS/TS/JSON, not CSS
-5. **Theme System**: Three modes (light/dark/system) with localStorage persistence
-6. **Import Paths**: Use `@/` alias for all imports
-7. **Components**: shadcn/ui components in `src/components/ui/`
+1. **Folder Structure**: Hybrid structure with features-based organization
+   - Main pages in `src/app/` (Next.js style)
+   - Feature modules in `src/features/[feature-name]/`
+   - Shared components in `src/components/`
+2. **File Placement Rules**:
+   - New features → `src/features/[feature-name]/page.tsx`
+   - Shared components → `src/components/`
+   - Feature-specific components → `src/features/[feature-name]/components/`
+   - UI library components → `src/components/ui/`
+3. **Tailwind v4**: No config file, everything in CSS with `@theme`
+4. **Dark Mode**: Use `.dark` class selector, not media queries
+5. **Linting**: Biome only checks JS/TS/JSON, not CSS
+6. **Theme System**: Three modes (light/dark/system) with localStorage persistence
+7. **Import Paths**: Use `@/` alias for all imports
 
 ### Quick Reference
 - Main page: `src/app/page.tsx`
+- Features: `src/features/[feature-name]/`
 - Global styles: `src/styles/globals.css`
 - Theme provider: `src/components/theme-provider.tsx`
 - Entry point: `src/main.tsx`
