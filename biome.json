@@ -30,18 +30,5 @@
       "quoteStyle": "single",
       "semicolons": "asNeeded"
     }
-  },
-  "css": {
-    "parser": {
-      "cssModules": false,
-      "allowWrongLineComments": true,
-      "tailwindDirectives": true
-    },
-    "formatter": {
-      "enabled": true
-    },
-    "linter": {
-      "enabled": true
-    }
   }
 }
