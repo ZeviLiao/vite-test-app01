@@ -4,6 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
+import type { TouchRippleActions } from '@/types/touch-ripple'
 
 const buttonVariants = cva(
   'relative overflow-hidden inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
@@ -43,23 +44,49 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const rippleRef = React.useRef<any>(null)
-    const [rippleElement, setRippleElement] =
-      React.useState<HTMLElement | null>(null)
+    const rippleRef = React.useRef<TouchRippleActions | null>(null)
+    const buttonRef = React.useRef<HTMLButtonElement | null>(null)
 
-    const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (rippleRef.current && rippleElement) {
-        rippleRef.current.start(event as any, { center: false })
-      }
-      props.onMouseDown?.(event)
-    }
+    // Store latest callbacks in refs to avoid recreating handlers
+    const onMouseDownRef = React.useRef(props.onMouseDown)
+    const onMouseUpRef = React.useRef(props.onMouseUp)
 
-    const handleMouseUp = (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (rippleRef.current) {
-        rippleRef.current.stop(event as any)
-      }
-      props.onMouseUp?.(event)
-    }
+    React.useEffect(() => {
+      onMouseDownRef.current = props.onMouseDown
+      onMouseUpRef.current = props.onMouseUp
+    })
+
+    const handleMouseDown = React.useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (rippleRef.current) {
+          rippleRef.current.start(event, { center: false })
+        }
+        onMouseDownRef.current?.(event)
+      },
+      [],
+    )
+
+    const handleMouseUp = React.useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (rippleRef.current) {
+          rippleRef.current.stop(event)
+        }
+        onMouseUpRef.current?.(event)
+      },
+      [],
+    )
+
+    const handleRef = React.useCallback(
+      (node: HTMLButtonElement | null) => {
+        buttonRef.current = node
+        if (typeof ref === 'function') {
+          ref(node)
+        } else if (ref) {
+          ref.current = node
+        }
+      },
+      [ref],
+    )
 
     if (asChild) {
       return (
@@ -71,28 +98,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       )
     }
 
-    const Comp = 'button'
     return (
-      <Comp
+      <button
         className={cn(buttonVariants({ variant, size, className }))}
-        ref={(node) => {
-          setRippleElement(node)
-          if (typeof ref === 'function') {
-            ref(node)
-          } else if (ref) {
-            ref.current = node
-          }
-        }}
+        ref={handleRef}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         {...props}
       >
         {props.children}
-        {rippleElement && (
-          // @ts-expect-error - TouchRipple has complex internal types
-          <TouchRipple ref={rippleRef} center={false} />
-        )}
-      </Comp>
+        {/* @ts-expect-error - TouchRipple has complex internal types */}
+        <TouchRipple ref={rippleRef} center={false} />
+      </button>
     )
   },
 )

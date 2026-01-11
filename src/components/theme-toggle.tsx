@@ -6,15 +6,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { getSystemThemeLabel } from '@/lib/theme'
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
-
-  const getSystemTheme = () => {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'Dark'
-      : 'Light'
-  }
 
   const getThemeIcon = () => {
     if (theme === 'light') return '☀️'
@@ -22,12 +17,20 @@ export function ThemeToggle() {
     return '💻'
   }
 
+  const getThemeLabel = () => {
+    if (theme === 'light') return 'Light'
+    if (theme === 'dark') return 'Dark'
+    return 'System'
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
           <span>{getThemeIcon()}</span>
-          <span className="sr-only">Toggle theme</span>
+          <span className="sr-only">
+            Current theme: {getThemeLabel()}. Click to change theme.
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -38,7 +41,7 @@ export function ThemeToggle() {
           🌙 Dark
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('system')}>
-          💻 System ({getSystemTheme()})
+          💻 System ({getSystemThemeLabel()})
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

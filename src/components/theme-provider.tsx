@@ -1,6 +1,15 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { getSystemTheme } from '@/lib/theme'
+import type { ColorMode } from '@/types/theme'
 
-type Theme = 'dark' | 'light' | 'system'
+type Theme = ColorMode
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -36,25 +45,39 @@ export function ThemeProvider({
     root.classList.remove('light', 'dark')
 
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-        ? 'dark'
-        : 'light'
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const systemTheme = getSystemTheme()
 
       root.classList.add(systemTheme)
-      return
+
+      // Listen for system theme changes
+      const handleChange = (e: MediaQueryListEvent) => {
+        root.classList.remove('light', 'dark')
+        root.classList.add(e.matches ? 'dark' : 'light')
+      }
+
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
     }
 
     root.classList.add(theme)
   }, [theme])
 
-  const value = {
-    theme,
-    setTheme: (newTheme: Theme) => {
+  const setThemeCallback = useCallback(
+    (newTheme: Theme) => {
       localStorage.setItem(storageKey, newTheme)
       setTheme(newTheme)
     },
-  }
+    [storageKey],
+  )
+
+  const value = useMemo(
+    () => ({
+      theme,
+      setTheme: setThemeCallback,
+    }),
+    [theme, setThemeCallback],
+  )
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>

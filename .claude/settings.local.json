@@ -68,7 +68,8 @@
       "WebFetch(domain:css-tricks.com)",
       "WebFetch(domain:www.npmjs.com)",
       "Bash(npm info:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(find:*)"
     ]
   }
 }

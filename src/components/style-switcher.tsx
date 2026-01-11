@@ -9,31 +9,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import type { ColorTheme } from '@/types/theme'
 
-type Theme =
-  | 'default'
-  | 'blue'
-  | 'green'
-  | 'orange'
-  | 'red'
-  | 'rose'
-  | 'violet'
-  | 'yellow'
-
-const themes = [
-  { name: 'Default', value: 'default' as Theme },
-  { name: 'Blue', value: 'blue' as Theme },
-  { name: 'Green', value: 'green' as Theme },
-  { name: 'Orange', value: 'orange' as Theme },
-  { name: 'Red', value: 'red' as Theme },
-  { name: 'Rose', value: 'rose' as Theme },
-  { name: 'Violet', value: 'violet' as Theme },
-  { name: 'Yellow', value: 'yellow' as Theme },
+const themes: Array<{ name: string; value: ColorTheme }> = [
+  { name: 'Default', value: 'default' },
+  { name: 'Blue', value: 'blue' },
+  { name: 'Green', value: 'green' },
+  { name: 'Orange', value: 'orange' },
+  { name: 'Red', value: 'red' },
+  { name: 'Rose', value: 'rose' },
+  { name: 'Violet', value: 'violet' },
+  { name: 'Yellow', value: 'yellow' },
 ]
 
 export function StyleSwitcher() {
-  const [selectedTheme, setSelectedTheme] = useState<Theme>(() => {
-    return (localStorage.getItem('theme') as Theme) || 'default'
+  const [selectedTheme, setSelectedTheme] = useState<ColorTheme>(() => {
+    return (localStorage.getItem('theme') as ColorTheme) || 'default'
   })
 
   useEffect(() => {
@@ -45,7 +36,7 @@ export function StyleSwitcher() {
     }
   }, [selectedTheme])
 
-  const handleThemeChange = (theme: Theme) => {
+  const handleThemeChange = (theme: ColorTheme) => {
     setSelectedTheme(theme)
     localStorage.setItem('theme', theme)
   }
