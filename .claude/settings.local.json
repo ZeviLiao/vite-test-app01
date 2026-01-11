@@ -54,7 +54,21 @@
       "Bash(git push)",
       "Bash(git push:*)",
       "Bash(npx shadcn@latest init)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(xargs kill:*)",
+      "Bash(for color in gray zinc stone)",
+      "Bash(do echo \"=== $color ===\" grep -A 18 \"data-base-color=\"\"$color\"\"\" src/styles/globals.css)",
+      "Bash(for color in neutral slate gray zinc stone)",
+      "Bash(do echo \"=== Light $color ===\" grep -A 20 \":root\\\\[data-base-color=\"\"$color\"\"\\\\]\" src/styles/globals.css)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebSearch",
+      "mcp__chrome-devtools__press_key",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:css-tricks.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npm info:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

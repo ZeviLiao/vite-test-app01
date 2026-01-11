@@ -1,3 +1,4 @@
+import TouchRipple from '@mui/material/ButtonBase/TouchRipple'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import * as React from 'react'
@@ -5,7 +6,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'relative overflow-hidden inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -42,13 +43,56 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button'
+    const rippleRef = React.useRef<any>(null)
+    const [rippleElement, setRippleElement] =
+      React.useState<HTMLElement | null>(null)
+
+    const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (rippleRef.current && rippleElement) {
+        rippleRef.current.start(event as any, { center: false })
+      }
+      props.onMouseDown?.(event)
+    }
+
+    const handleMouseUp = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (rippleRef.current) {
+        rippleRef.current.stop(event as any)
+      }
+      props.onMouseUp?.(event)
+    }
+
+    if (asChild) {
+      return (
+        <Slot
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+        />
+      )
+    }
+
+    const Comp = 'button'
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
+        ref={(node) => {
+          setRippleElement(node)
+          if (typeof ref === 'function') {
+            ref(node)
+          } else if (ref) {
+            ref.current = node
+          }
+        }}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
         {...props}
-      />
+      >
+        {props.children}
+        {rippleElement && (
+          // @ts-expect-error - TouchRipple has complex internal types
+          <TouchRipple ref={rippleRef} center={false} />
+        )}
+      </Comp>
     )
   },
 )
