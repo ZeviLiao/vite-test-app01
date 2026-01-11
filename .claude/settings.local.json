@@ -33,7 +33,23 @@
       "Bash(node:*)",
       "Bash(pnpm --version:*)",
       "Bash(code:*)",
-      "Bash(defaults read:*)"
+      "Bash(defaults read:*)",
+      "Bash(npx husky init)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run lint:fix:*)",
+      "Bash(npm run format:*)",
+      "Bash(npx lint-staged --help)",
+      "Bash(tree:*)",
+      "Bash(npx shadcn@canary init:*)",
+      "Bash(npx shadcn@canary add:*)",
+      "Bash(timeout 10 npm run dev)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(npm exec:*)",
+      "Bash(npx shadcn add:*)",
+      "Bash(timeout 8 npm run dev:*)",
+      "mcp__chrome-devtools__wait_for",
+      "Bash(git add:*)"
     ]
   }
 }
